@@ -11,10 +11,13 @@
 #include "nvs_flash.h"
 #include "esp8266/spi_struct.h"
 #include "esp8266/gpio_struct.h"
-
+//supports three type of humidity/temperature sensors
+//also for esp01 gpio has to be changed down in app_main init area
 #define sensorType   2  //0 for dht11, 1 for dht22 or 2 for aht10
 
+//base station ip address
 char *host_ip_addr = "192.168.0.106";
+
 char payload[256] = "GET /index.html HTTP/1.1\nHost: 192.168.0.122\nUser-Agent: curl/7.68.0\n\0";
 #include "./components/tcpclient.c"
 
@@ -67,7 +70,7 @@ void app_main()
        //one of the other
        if (sensorType == 2) {   //0 for dht11, 1 for dht22 or 2 for aht10
           aht10_read(); }
-          else DHT11_read();
+       else DHT11_read();
 
        printf("hum = %02d.%d   temp = %02d.%d\n",
             humidity/10, humidity%10, temperature/10, temperature%10);
