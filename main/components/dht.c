@@ -6,7 +6,6 @@
 
 static gpio_num_t dht_gpio;
 int highw = 31;
-int temperature, humidity;
 
 static int _waitOrTimeout(uint16_t microSeconds, int level) {
     int micros_ticks = 0;
@@ -58,9 +57,8 @@ void DHT11_read() {
         } 
         else gpio_set_level(2, 0);
     }
+    printf("0x%02x%02x%02x%02x\n", data[0], data[1], data[2], data[3]);
     if((data[0]+ data[1]+ data[2]+ data[3])%256 == data[4]) { 
-
-       printf("0x%02x%02x%02x%02x\n", data[0], data[1], data[2], data[3]);
        if(sensorType == 0) {
           humidity = 10*data[0]+data[1];
           temperature = 10*data[2]+data[3]; 
@@ -69,11 +67,5 @@ void DHT11_read() {
           humidity = 256*data[0]+data[1];
           temperature = 256*data[2]+data[3]; 
        }
-       //printf("0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x  ", data[0], data[1], data[2], data[3], data[4], data[5]); 
-       //printf("hum = %02d.%d   temp = %02d.%d   ", 
-       //     humidity/10, humidity%10, temperature/10, temperature%10);
-       //       (256*data[0]+data[1])/10, data[1]%10, (256*data[2]+data[3])/10, data[3]%10); 
-       //printf("sum 0x%02x  par 0x%02x    ", (data[0]+ data[1]+ data[2]+ data[3])%256, data[4]); 
-       //printf("parity %d\n", (data[0]+ data[1]+ data[2]+ data[3])%256 == data[4]); 
     }
 }
