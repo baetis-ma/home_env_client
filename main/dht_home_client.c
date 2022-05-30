@@ -13,10 +13,10 @@
 #include "esp8266/gpio_struct.h"
 //supports three type of humidity/temperature sensors
 //also for esp01 gpio has to be changed down in app_main init area
-#define sensorType   1  //0 for dht11, 1 for dht22 or 2 for aht10
+#define sensorType   0  //0 for dht11, 1 for dht22 or 2 for aht10
  //and calibration 
-int humoff = 0;
-int tempoff = 0;
+int humoff = 10;
+int tempoff = -30;
 
 //base station ip address
 char *host_ip_addr = "192.168.0.106";
@@ -32,8 +32,8 @@ char payload[256] = "GET /index.html HTTP/1.1\nHost: 192.168.0.122\nUser-Agent: 
 #include "./components/i2c.c"
 #include "./components/ath10.c"
 
-int rate = 10, regnum = 0;;
-char name[32] = "anonymous";
+int rate, regnum=0;
+char name[32];
 char *pch;
 int strcnt = 0;
 void hostreturn(char *rx_buffer) {
@@ -44,7 +44,7 @@ void hostreturn(char *rx_buffer) {
       if(strcnt == 0)sscanf(pch, "%d", &regnum);
       if(strcnt == 1)strcpy(name, pch);
       if(strcnt == 2)sscanf(pch, "%d", &rate);
-      //printf("%d %s\n", strcnt++, pch);
+      printf("%d %s\n", strcnt++, pch);
       pch = strtok (NULL, ",");
    } 
    printf("read regnum= %d name=%s rate=%d\n", regnum, name, rate);
@@ -55,6 +55,8 @@ void app_main()
     nvs_flash_init();
     initialize_wifi();
     wait_for_ip();
+    rate = 10;
+    strcpy(name, "anonymous");
     //keep the i2c for aht10
     if (sensorType == 2) {   //0 for dht11, 1 for dht22 or 2 for aht10
        i2c_init();
@@ -62,8 +64,8 @@ void app_main()
     }
     else {
        //keep the dht for dht22
-       DHT11_init(GPIO_NUM_4); //for d1 mini and wroom boards
-       //DHT11_init(GPIO_NUM_0); //for esp01 boards
+       //DHT11_init(GPIO_NUM_4); //for d1 mini and wroom boards
+       DHT11_init(GPIO_NUM_0); //for esp01 boards
     }
  
     xTaskCreate(tcp_client_task, "tcp_client", 4096, NULL, 5, NULL);
