@@ -57,7 +57,6 @@ void app_main()
     wait_for_ip();
     rate = 10;
     strcpy(name, "anonymous");
-    //keep the i2c for aht10
     if (sensorType == 2) {   //0 for dht11, 1 for dht22 or 2 for aht10
        i2c_init();
        i2c_detect();
@@ -72,7 +71,6 @@ void app_main()
     
     int cnt = 0;
     while(1) {
-       //one of the other
        if (sensorType == 2) {   //0 for dht11, 1 for dht22 or 2 for aht10
           aht10_read(); }
        else DHT11_read();
@@ -80,13 +78,10 @@ void app_main()
        printf("hum = %02d.%d   temp = %02d.%d\n",
             (humidity+humoff)/10, (humidity+humoff)%10, (temperature+tempoff)/10, (temperature+tempoff)%10);
 
-       //sprintf(payload, "GET /client?%d,%s,%s,%d,%d HTTP/1.1\nHost: %s\nUser-Agent: curl/7.68.0\n",
-       //        regnum, glob_ipadr, name, humidity, temperature, host_ip_addr);
        sprintf(payload, "GET /client?%d,%s,%s,%d,%d HTTP/1.1\nHost: %s\nUser-Agent: curl/7.68.0\n",
                regnum, glob_ipadr, name, humidity+humoff, temperature+tempoff, host_ip_addr);
 
        printf("payload --> %s", payload);
-       //payload[strlen(payload)] = '\0';
        cnt++;
        vTaskDelay(rate*1000/portTICK_RATE_MS);
     }

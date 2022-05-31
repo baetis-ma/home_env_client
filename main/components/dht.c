@@ -57,7 +57,7 @@ void DHT11_read() {
         } 
         else gpio_set_level(2, 0);
     }
-    printf("0x%02x%02x%02x%02x\n", data[0], data[1], data[2], data[3]);
+    //printf("0x%02x%02x%02x%02x\n", data[0], data[1], data[2], data[3]);
     if((data[0]+ data[1]+ data[2]+ data[3])%256 == data[4]) { 
        if(sensorType == 0) {
           humidity = 10*data[0]+data[1];

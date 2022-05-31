@@ -1,0 +1,45 @@
+https://docs.espressif.com/projects/esp8266-rtos-sdk/en/latest/get-started/index.html
+
+--setup-- 
+sudo apt-get install gcc git wget make libncurses-dev flex bison gperf python python-serial
+mkdir -p ~/esp
+cd ~/esp
+tar -xzf ~/Downloads/xtensa-lx106-elf-linux64-1.22.0-100-ge567ec7-5.2.0.tar.gz
+
+cd ~/esp
+git clone --recursive https://github.com/espressif/ESP8266_RTOS_SDK.git
+export IDF_PATH=~/esp8266/ESP8266_RTOS_SDK
+export PATH=$PATH:~/esp8266/xtensa-lx106-elf/bin
+
+make flash monitor ESPPORT=/dev/ttyUSB1
+
+this part took some time to figure out - need to get python and pip at same version
+and a path from python to python3.8
+sudo apt remove python*
+sudo apt-get install  python3.8 python3-pip python3-serial
+sudo ln /usr/bin/python3.8 /usr/bin/python
+python3.8 -m pip install --user -r $IDF_PATH/requirements.txt
+
+cp -r $IDF_PATH/examples/get-started/hello_world .
+cd hello_world/
+
+sudo chmod 666 /dev/ttyUSB0
+
+make menuconfig       (add correct serial port)
+make flash            (takes a while the first time)
+make monitor          (exit with cntl-] )
+
+
+
+
+
+ESP-01
+have to short gpio then plug into usb
+program device 
+remove from usb
+remove short
+plug back in
+
+had to edit sdkconfig to set console uart baud rate to 115200 after running make menuconfig
+esp01 has is 1meg on menuconfig- serial flaser config, flash size 1M
+then run make flash
